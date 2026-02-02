@@ -27,11 +27,11 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - run: docker push wndlswo/mini-app:latest
 
-      - name: Deploy Docker container via SSH
-        run: |
-          ssh -o StrictHostKeyChecking=no user@your_server_ip '
-            docker pull wndlswo/mini-app:latest || true
-            docker stop mini-app || true
-            docker rm mini-app || true
-            docker run -d --name mini-app -p 8080:8080 wndlswo/mini-app:latest
-          '
+#      - name: Deploy Docker container via SSH
+ #       run: |
+  #        ssh -o StrictHostKeyChecking=no user@your_server_ip '
+   #         docker pull wndlswo/mini-app:latest || true
+    #        docker stop mini-app || true
+     #       docker rm mini-app || true
+     #       docker run -d --name mini-app -p 8080:8080 wndlswo/mini-app:latest
+     #     '
