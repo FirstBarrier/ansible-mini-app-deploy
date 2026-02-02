@@ -1,25 +1,37 @@
-name: Docker CI
+name: Docker CI + Deploy via SSH
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          ssh-private-key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
 
       - name: Build Docker image
         run: docker build -t wndlswo/mini-app:latest .
 
-      - name: Push Docker image
-        run: docker push wndlswo/mini-app:latest
+      - name: Push Docker image (optional)
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - run: docker push wndlswo/mini-app:latest
+
+      - name: Deploy Docker container via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no user@your_server_ip '
+            docker pull wndlswo/mini-app:latest || true
+            docker stop mini-app || true
+            docker rm mini-app || true
+            docker run -d --name mini-app -p 8080:8080 wndlswo/mini-app:latest
+          '
