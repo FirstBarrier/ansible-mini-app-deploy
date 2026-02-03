@@ -22,15 +22,21 @@ sudo apt install ansible -y
 ---
 
 ## 2. 파일 구조 (Repository Structure)
-공유해드린 폴더의 구조는 다음과 같습니다.
 ```text
 .
+├── .git
+├── .gitignore
+├── deploy_mini_app.yml
 ├── hosts.ini            # 앤서블 인벤토리 (대상 서버 주소록)
 ├── install_docker.yml   # 도커 자동 설치 플레이북
 ├── web_setup.yml        # Nginx 웹 서버 세팅 플레이북
-└── mini-app/            # 미니 웹서버 소스 코드 폴더
+├── mini-app/            # 미니 웹서버 소스 코드 폴더
     ├── app.js           # 웹 서버 코드
     └── Dockerfile       # 도커라이징 레시피
+└── .github
+    └── workflows
+        └── docker-ci.yml
+
 ```
 
 ---
@@ -46,7 +52,7 @@ ansible my_computer -i hosts.ini -m ping
 ### Step 2: 도커 자동 설치 (Playbook Run)
 순정 리눅스 서버를 도커 엔진이 깔린 서버로 자동 변신시킵니다. (비밀번호 입력 필수; WSL 설치시 입력했던 비밀번호)
 ```bash
-ansible-playbook -i hosts.ini install_docker.yml -K
+ansible-playbook -i hosts.ini deploy_mini_app.yml -K
 ```
 
 ### Step 3: 도커라이징 및 실행 (App Deployment)
@@ -72,4 +78,4 @@ docker run -d -p 8080:8080 my-mini-app:latest
 
 ## 💡 주의사항
 *   **탭 문자(Tab) 금지:** 모든 `.yml` 파일은 탭 대신 **스페이스바 2칸**으로 들여쓰기 해야 합니다. (이맥스 사용 시 `untabify` 필수!)
-*   **비밀번호 요청:** `-K` 옵션 사용 시 본인의 WSL 비밀번호를 입력하면 됩니다.
+*   **비밀번호 요청:** `-K` 옵션 사용 시 본인의 WSL 비밀번호를 입력하면 됩니다
