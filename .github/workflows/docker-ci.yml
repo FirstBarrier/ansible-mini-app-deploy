@@ -1,37 +1,34 @@
-name: Docker CI + Deploy via SSH
+name: Docker CI + Push Only (EC2 키 미수신 상태)
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ 소스 코드 체크아웃
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Set up SSH key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-
+      # 2️⃣ Docker 이미지 빌드
       - name: Build Docker image
-        run: docker build -t wndlswo/mini-app:latest .
+        run: docker build -t my-mini-app:latest .
 
-      - name: Push Docker image (optional)
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - run: docker push wndlswo/mini-app:latest
+      # 3️⃣ Docker Hub 로그인 & 이미지 푸시
+      - name: Login & Push Docker image
+        run: |
+          echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+          docker tag my-mini-app:latest wndlswo/mini-app:latest
+          docker push wndlswo/mini-app:latest
 
-#      - name: Deploy Docker container via SSH
- #       run: |
-  #        ssh -o StrictHostKeyChecking=no user@your_server_ip '
-   #         docker pull wndlswo/mini-app:latest || true
-    #        docker stop mini-app || true
-     #       docker rm mini-app || true
-     #       docker run -d --name mini-app -p 8080:8080 wndlswo/mini-app:latest
-     #     '
+      # 4️⃣ 배포 단계 (키 도착 전에는 주석 처리)
+      # - name: Deploy via Ansible
+      #   uses: webfactory/ssh-agent@v0.9.0
+      #   with:
+      #     ssh-private-key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+      #
+      # - name: Run Ansible playbook
+      #   run: ansible-playbook deploy_mini_app.yml

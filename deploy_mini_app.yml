@@ -4,28 +4,28 @@
   become: true
 
   tasks:
+    # 1️⃣ 최신 이미지 Pull
     - name: Pull latest mini-app image
       docker_image:
-        name: my-mini-app
+        name: wndlswo/mini-app
+        tag: latest
         source: pull
-      ignore_errors: true
 
+    # 2️⃣ 기존 컨테이너 중지 (없으면 무시)
     - name: Stop existing mini-app container if exists
-      docker_container:
-        name: mini-app
-        state: stopped
+      shell: docker stop mini-app
       ignore_errors: true
 
+    # 3️⃣ 기존 컨테이너 제거 (없으면 무시)
     - name: Remove existing mini-app container if exists
-      docker_container:
-        name: mini-app
-        state: absent
+      shell: docker rm mini-app
       ignore_errors: true
 
+    # 4️⃣ 컨테이너 실행
     - name: Run mini-app container
       docker_container:
         name: mini-app
-        image: my-mini-app
+        image: wndlswo/mini-app:latest
         state: started
         restart_policy: always
         ports:
