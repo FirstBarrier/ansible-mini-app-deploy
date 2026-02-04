@@ -1,6 +1,6 @@
 ---
 - name: "Install Docker Engine on Target Servers"
-  hosts: my_computer
+  hosts: web
   become: true
 
   tasks:

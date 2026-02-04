@@ -1,6 +1,6 @@
 ---
 - name: Deploy Mini Web App Container
-  hosts: localhost
+  hosts: web
   become: true
 
   tasks:

@@ -1,6 +1,6 @@
 ---
 - name: "Platform Team First Infrastructure Setup"
-  hosts: my_computer
+  hosts: web
   become: true
 
   tasks:
