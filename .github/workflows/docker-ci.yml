@@ -15,7 +15,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t my-image:latest .
+          docker build -t my-image:latest ./mini-app
 
       - name: Docker Hub Login
         uses: docker/login-action@v2
